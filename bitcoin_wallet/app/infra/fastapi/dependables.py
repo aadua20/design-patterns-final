@@ -7,7 +7,7 @@ from bitcoin_wallet.app.core.repository.user_repository import UserRepository
 
 
 def get_user_repository(request: Request) -> UserRepository:
-    return request.app.state.books
+    return request.app.state.users  # type: ignore
 
 
 UserRepositoryDependable = Annotated[UserRepository, Depends(get_user_repository)]
