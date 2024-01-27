@@ -28,6 +28,27 @@ class UserRepository:
         except sqlite3.IntegrityError:
             raise ExistsError(user)
 
+    def get_user(self, user_id: str) -> User | None:
+        query = "SELECT id, username, api_key, wallet_count FROM users WHERE id = ?"
+        user = self._db.fetch_one(query, (user_id,))
+        return (
+            User(
+                user_id=user[0], username=user[1], api_key=user[2], wallet_count=user[3]
+            )
+            if user
+            else None
+        )
+
+    def user_exists(self, username: str) -> bool:
+        query = "SELECT * FROM users WHERE username = ?"
+        user = self._db.fetch_one(query, (username,))
+        return user is not None
+
+    def is_registered(self, api_key: str) -> bool:
+        query = "SELECT * FROM users WHERE api_key = ?"
+        user = self._db.fetch_one(query, (api_key,))
+        return user is not None
+
 
 class IUserRepository(Protocol):
     def add_user(self, user: User) -> None:

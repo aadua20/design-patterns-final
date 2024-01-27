@@ -1,11 +1,12 @@
 from dataclasses import dataclass, field
+from typing import Optional
 from uuid import UUID, uuid4
 
 
 @dataclass
 class User:
     username: str
-    wallet_count: int
+    wallet_count: int = 0
     user_id: UUID = field(default_factory=uuid4)
     api_key: UUID = field(default_factory=uuid4)
 
@@ -15,7 +16,7 @@ class User:
     def get_username(self) -> str:
         return self.username
 
-    def get_wallet_count(self) -> int:
+    def get_wallet_count(self) -> int | None:
         return self.wallet_count
 
     def get_api_key(self) -> str:

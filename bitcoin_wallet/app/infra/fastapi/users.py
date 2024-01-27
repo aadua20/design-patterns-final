@@ -32,8 +32,7 @@ class UserListEnvelope(BaseModel):
 
 
 # TODO
-# id - გვაქვს uuid - გვინდა იყოს auto increment რიცხვი
-# wallet_count საერთოდ რომ არ გადავცეთ კარგი იქნებოდა
+# user_id - გვაქვს uuid - გვინდა იყოს auto increment რიცხვი
 @user_api.post(
     "/users",
     status_code=201,
@@ -43,7 +42,7 @@ def create_user(
     request: CreateUserRequest, users: UserRepositoryDependable
 ) -> dict[str, Any] | JSONResponse:
     try:
-        user = User(username=request.username, wallet_count=0)
+        user = User(**request.model_dump())
         users.add_user(user)
 
         return {"user": user}

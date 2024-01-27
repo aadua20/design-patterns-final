@@ -18,3 +18,12 @@ class UserService:
 
     def add_user(self, user: User) -> None:
         self._user_repository.add_user(user)
+
+    def get_user(self, user_id: str) -> User | None:
+        return self._user_repository.get_user(user_id)
+
+    def user_exists(self, username: str) -> bool:
+        return self._user_repository.user_exists(username)
+
+    def is_registered(self, api_key: str) -> bool:
+        return self._user_repository.is_registered(api_key)

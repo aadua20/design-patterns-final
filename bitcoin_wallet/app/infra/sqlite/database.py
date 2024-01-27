@@ -24,6 +24,15 @@ class Database:
                 cursor.execute(query, params)
             return cursor.fetchall()
 
+    def fetch_one(self, query: str, params: Any = None) -> Any:
+        with sqlite3.connect(self.db_name) as connection:
+            cursor = connection.cursor()
+            if params is None:
+                cursor.execute(query)
+            else:
+                cursor.execute(query, params)
+            return cursor.fetchone()
+
 
 class DatabaseInitializer:
     @staticmethod
