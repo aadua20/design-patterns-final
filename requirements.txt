@@ -1,0 +1,14 @@
+black
+flake8
+isort
+mypy
+pytest
+uvicorn
+fastapi
+pydantic
+MyApplication
+python-dotenv
+typer
+Faker
+starlette
+httpx
