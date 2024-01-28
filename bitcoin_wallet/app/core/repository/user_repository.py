@@ -16,7 +16,7 @@ class IUserRepository(Protocol):
     def user_exists(self, username: str) -> bool:
         pass
 
-    def is_registered(self, api_key: str) -> bool:
+    def get_user_by_api_key(self, api_key: str) -> User | None:
         pass
 
 
@@ -56,7 +56,19 @@ class UserRepository(IUserRepository):
         user = self._db.fetch_one(query, (username,))
         return user is not None
 
-    def is_registered(self, api_key: str) -> bool:
-        query = "SELECT * FROM users WHERE api_key = ?"
+    def get_user_by_api_key(self, api_key: str) -> User | None:
+        query = (
+            "SELECT id, username, api_key, wallet_count FROM users WHERE api_key = ?"
+        )
         user = self._db.fetch_one(query, (api_key,))
-        return user is not None
+        # TODO: remove code duplication
+        return (
+            User(
+                user_id=int(user[0]),
+                username=user[1],
+                api_key=user[2],
+                wallet_count=int(user[3]),
+            )
+            if user
+            else None
+        )

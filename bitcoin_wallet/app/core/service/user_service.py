@@ -28,5 +28,5 @@ class UserService:
     def user_exists(self, username: str) -> bool:
         return self._user_repository.user_exists(username)
 
-    def is_registered(self, api_key: str) -> bool:
-        return self._user_repository.is_registered(api_key)
+    def get_user_by_api_key(self, api_key: str) -> User | None:
+        return self._user_repository.get_user_by_api_key(api_key)

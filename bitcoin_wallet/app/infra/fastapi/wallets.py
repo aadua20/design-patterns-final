@@ -1,8 +1,14 @@
-from fastapi import APIRouter
+from typing import Annotated
+
+from fastapi import APIRouter, Header
 from pydantic import BaseModel
+from starlette.responses import JSONResponse
 
 from bitcoin_wallet.app.core.model.wallet import WalletItem
-from bitcoin_wallet.app.infra.fastapi.dependables import WalletServiceDependable
+from bitcoin_wallet.app.infra.fastapi.dependables import (
+    UserServiceDependable,
+    WalletServiceDependable,
+)
 
 wallet_api = APIRouter(tags=["Wallets"])
 
@@ -16,6 +22,21 @@ class WalletItemEnvelope(BaseModel):
     status_code=201,
     response_model=WalletItemEnvelope,
 )
-def create_user(wallet_service: WalletServiceDependable) -> WalletItemEnvelope:
-    wallet_item: WalletItem = wallet_service.create_wallet(1)
+def create_user(
+    user_service: UserServiceDependable,
+    wallet_service: WalletServiceDependable,
+    x_api_key: Annotated[str | None, Header()] = None,
+) -> WalletItemEnvelope | JSONResponse:
+    if x_api_key is None:
+        return JSONResponse(
+            status_code=401,
+            content={"message": "API key is missing"},
+        )
+    user = user_service.get_user_by_api_key(x_api_key)
+    if user is None:
+        return JSONResponse(
+            status_code=401,
+            content={"message": "given API key doesn't belong to any user"},
+        )
+    wallet_item: WalletItem = wallet_service.create_wallet(int(user.get_id()))
     return WalletItemEnvelope(wallet=wallet_item)
