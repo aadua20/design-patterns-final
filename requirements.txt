@@ -12,3 +12,4 @@ typer
 Faker
 starlette
 httpx
+requests
