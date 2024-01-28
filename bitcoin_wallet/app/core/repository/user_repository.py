@@ -6,7 +6,21 @@ from bitcoin_wallet.app.core.model.user import User
 from bitcoin_wallet.app.infra.sqlite.database import Database
 
 
-class UserRepository:
+class IUserRepository(Protocol):
+    def add_user(self, user: User) -> None:
+        pass
+
+    def get_user(self, user_id: int) -> User | None:
+        pass
+
+    def user_exists(self, username: str) -> bool:
+        pass
+
+    def is_registered(self, api_key: str) -> bool:
+        pass
+
+
+class UserRepository(IUserRepository):
     _db: Database
 
     def __init__(self, db: Database):
@@ -46,17 +60,3 @@ class UserRepository:
         query = "SELECT * FROM users WHERE api_key = ?"
         user = self._db.fetch_one(query, (api_key,))
         return user is not None
-
-
-class IUserRepository(Protocol):
-    def add_user(self, user: User) -> None:
-        pass
-
-    def get_user(self, user_id: int) -> User:
-        pass
-
-    def user_exists(self, username: str) -> bool:
-        pass
-
-    def is_registered(self, api_key: str) -> bool:
-        pass
