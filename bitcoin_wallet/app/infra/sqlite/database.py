@@ -24,6 +24,15 @@ class Database:
                 cursor.execute(query, params)
             return cursor.fetchall()
 
+    def fetch_one(self, query: str, params: Any = None) -> Any:
+        with sqlite3.connect(self.db_name) as connection:
+            cursor = connection.cursor()
+            if params is None:
+                cursor.execute(query)
+            else:
+                cursor.execute(query, params)
+            return cursor.fetchone()
+
 
 class DatabaseInitializer:
     @staticmethod
@@ -32,7 +41,7 @@ class DatabaseInitializer:
         db.execute_query(
             """
                 CREATE TABLE IF NOT EXISTS users (
-                    id INTEGER PRIMARY KEY,
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
                     username VARCHAR UNIQUE,
                     api_key VARCHAR UNIQUE,
                     wallet_count INTEGER
