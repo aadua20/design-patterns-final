@@ -15,11 +15,9 @@ class UserRepository:
     def add_user(self, user: User) -> None:
         try:
             query = (
-                "INSERT INTO users (id, username, api_key, wallet_count) "
-                "VALUES(?, ?, ?, ?)"
+                "INSERT INTO users (username, api_key, wallet_count) " "VALUES(?, ?, ?)"
             )
             params = (
-                user.get_id(),
                 user.get_username(),
                 user.get_api_key(),
                 user.get_wallet_count(),
@@ -28,7 +26,7 @@ class UserRepository:
         except sqlite3.IntegrityError:
             raise ExistsError(user)
 
-    def get_user(self, user_id: str) -> User | None:
+    def get_user(self, user_id: int) -> User | None:
         query = "SELECT id, username, api_key, wallet_count FROM users WHERE id = ?"
         user = self._db.fetch_one(query, (user_id,))
         return (

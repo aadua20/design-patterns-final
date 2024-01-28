@@ -41,7 +41,7 @@ class DatabaseInitializer:
         db.execute_query(
             """
                 CREATE TABLE IF NOT EXISTS users (
-                    id VARCHAR UNIQUE,
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
                     username VARCHAR UNIQUE,
                     api_key VARCHAR UNIQUE,
                     wallet_count INTEGER

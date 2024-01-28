@@ -18,7 +18,6 @@ class CreateUserRequest(BaseModel):
 
 class UserItem(BaseModel):
     api_key: UUID
-    user_id: UUID
     username: str
     wallet_count: int
 
@@ -31,8 +30,6 @@ class UserListEnvelope(BaseModel):
     users: list[UserItem]
 
 
-# TODO
-# user_id - გვაქვს uuid - გვინდა იყოს auto increment რიცხვი
 @user_api.post(
     "/users",
     status_code=201,

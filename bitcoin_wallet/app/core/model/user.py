@@ -7,7 +7,7 @@ from uuid import UUID, uuid4
 class User:
     username: str
     wallet_count: int = 0
-    user_id: UUID = field(default_factory=uuid4)
+    user_id: Optional[int] = 0
     api_key: UUID = field(default_factory=uuid4)
 
     def get_id(self) -> str:
