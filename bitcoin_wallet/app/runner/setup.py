@@ -1,3 +1,4 @@
+from dotenv import load_dotenv
 from fastapi import FastAPI
 
 from bitcoin_wallet.app.core.repository.user_repository import UserRepository
@@ -6,6 +7,7 @@ from bitcoin_wallet.app.infra.sqlite.database import Database, DatabaseInitializ
 
 
 def init_app() -> FastAPI:
+    load_dotenv()
     app = FastAPI()
     db = Database()
     DatabaseInitializer.init_tables(db)
