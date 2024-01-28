@@ -21,5 +21,5 @@ class WalletItemEnvelope(BaseModel):
     response_model=WalletItemEnvelope,
 )
 def create_user(wallet_service: WalletServiceDependable) -> WalletItemEnvelope:
-    address = wallet_service.create_wallet()
+    address = wallet_service.create_wallet(1)
     return WalletItemEnvelope(wallet=WalletItem(address=address, balance=2))
