@@ -1,11 +1,12 @@
 import uuid
 from typing import Protocol
 
+from bitcoin_wallet.app.core.model.wallet import Wallet
 from bitcoin_wallet.app.infra.sqlite.database import Database
 
 
 class IWalletRepository(Protocol):
-    def create_wallet(self, user_id: int) -> str:
+    def create_wallet(self, user_id: int) -> Wallet:
         pass
 
 
@@ -19,7 +20,7 @@ class WalletRepository(IWalletRepository):
     def __init__(self, db: Database):
         self._db = db
 
-    def create_wallet(self, user_id: int) -> str:
+    def create_wallet(self, user_id: int) -> Wallet:
         address = generate_unique_address()
         initial_satoshi = 100_000_000
         query = """
@@ -27,4 +28,4 @@ class WalletRepository(IWalletRepository):
             VALUES (?, ?, ?)
         """
         self._db.execute_query(query, (user_id, address, initial_satoshi))
-        return address
+        return Wallet(address=address, satoshi=initial_satoshi)

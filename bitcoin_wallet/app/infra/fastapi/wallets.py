@@ -1,14 +1,10 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
 
+from bitcoin_wallet.app.core.model.wallet import WalletItem
 from bitcoin_wallet.app.infra.fastapi.dependables import WalletServiceDependable
 
 wallet_api = APIRouter(tags=["Wallets"])
-
-
-class WalletItem(BaseModel):
-    address: str
-    balance: int
 
 
 class WalletItemEnvelope(BaseModel):
@@ -21,5 +17,5 @@ class WalletItemEnvelope(BaseModel):
     response_model=WalletItemEnvelope,
 )
 def create_user(wallet_service: WalletServiceDependable) -> WalletItemEnvelope:
-    address = wallet_service.create_wallet(1)
-    return WalletItemEnvelope(wallet=WalletItem(address=address, balance=2))
+    wallet_item: WalletItem = wallet_service.create_wallet(1)
+    return WalletItemEnvelope(wallet=wallet_item)
