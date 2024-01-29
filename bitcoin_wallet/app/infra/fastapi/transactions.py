@@ -30,11 +30,11 @@ class CreateTransactionRequest(BaseModel):
     response_model=TransactionItemEnvelope,
 )
 def create_transaction(
-        request: CreateTransactionRequest,
-        user_service: UserServiceDependable,
-        wallet_service: WalletServiceDependable,
-        transaction_service: TransactionServiceDependable,
-        x_api_key: Annotated[str | None, Header()] = None,
+    request: CreateTransactionRequest,
+    user_service: UserServiceDependable,
+    wallet_service: WalletServiceDependable,
+    transaction_service: TransactionServiceDependable,
+    x_api_key: Annotated[str | None, Header()] = None,
 ) -> dict[str, Any] | JSONResponse:
     _transaction = TransactionItem(**request.model_dump())
     sender_id = wallet_service.get_wallet_user_id_by_address(
@@ -51,10 +51,10 @@ def create_transaction(
     )
 
     if (
-            sender_id is None
-            or receiver_id is None
-            or from_wallet_id is None
-            or to_wallet_id is None
+        sender_id is None
+        or receiver_id is None
+        or from_wallet_id is None
+        or to_wallet_id is None
     ):
         return JSONResponse(
             status_code=401,
@@ -89,12 +89,14 @@ def create_transaction(
             },
         )
 
-    from_balance = wallet_service.get_wallet_balance_by_address(_transaction.from_wallet_address)
-    to_balance = wallet_service.get_wallet_balance_by_address(_transaction.to_wallet_address)
+    from_balance = wallet_service.get_wallet_balance_by_address(
+        _transaction.from_wallet_address
+    )
+    to_balance = wallet_service.get_wallet_balance_by_address(
+        _transaction.to_wallet_address
+    )
 
-    if (
-            from_balance < _transaction.amount
-    ):
+    if from_balance < _transaction.amount:
         return JSONResponse(
             status_code=400,
             content={"message": "Insufficient funds in the source wallet."},
@@ -105,7 +107,9 @@ def create_transaction(
         from_wallet_id, to_wallet_id, _transaction.amount, same_user
     )
 
-    wallet_service.update_wallet_balance(from_wallet_id, from_balance - _transaction.amount)
+    wallet_service.update_wallet_balance(
+        from_wallet_id, from_balance - _transaction.amount
+    )
     wallet_service.update_wallet_balance(to_wallet_id, to_balance + _transaction.amount)
 
     return {"transaction": _transaction}
