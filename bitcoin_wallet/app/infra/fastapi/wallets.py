@@ -22,7 +22,7 @@ class WalletItemEnvelope(BaseModel):
     status_code=201,
     response_model=WalletItemEnvelope,
 )
-def create_user(
+def create_wallet(
     user_service: UserServiceDependable,
     wallet_service: WalletServiceDependable,
     x_api_key: Annotated[str | None, Header()] = None,
