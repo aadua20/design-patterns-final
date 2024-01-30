@@ -31,6 +31,8 @@ def init_app() -> FastAPI:
     app.state.transactions = TransactionRepository(db)
     app.state.user_service = UserService(app.state.users)
     app.state.wallet_service = WalletService(wallet_repository, convertor)
-    app.state.transaction_service = TransactionService(app.state.transactions)
+    app.state.transaction_service = TransactionService(
+        app.state.transactions, app.state.wallet_service
+    )
 
     return app

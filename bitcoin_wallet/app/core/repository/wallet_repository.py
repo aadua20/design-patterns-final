@@ -9,16 +9,10 @@ class IWalletRepository(Protocol):
     def create_wallet(self, user_id: int) -> Wallet:
         pass
 
-    def get_wallet_id_by_address(self, address: str) -> int | None:
+    def get_wallet_by_address(self, address: str) -> Wallet | None:
         pass
 
-    def get_wallet_user_id_by_address(self, address: str) -> int | None:
-        pass
-
-    def get_wallet_balance_by_address(self, address: str) -> int:
-        pass
-
-    def update_wallet_balance(self, wallet_id: int, amount: int) -> None:
+    def update_wallet_balance(self, wallet_id: int | None, amount: int) -> None:
         pass
 
 
@@ -40,24 +34,20 @@ class WalletRepository(IWalletRepository):
             VALUES (?, ?, ?)
         """
         self._db.execute_query(query, (user_id, address, initial_satoshi))
-        return Wallet(address=address, satoshi=initial_satoshi)
+        return Wallet(address=address, satoshi=initial_satoshi, user_id=user_id)
 
-    def get_wallet_id_by_address(self, address: str) -> int | None:
-        query = "SELECT id FROM wallets WHERE address = ?"
+    def get_wallet_by_address(self, address: str) -> Wallet | None:
+        query = "SELECT id, user_id, address, satoshi FROM wallets WHERE address = ?"
         wallet = self._db.fetch_one(query, (address,))
-        return wallet[0] if wallet else None
+        return (
+            Wallet(
+                id=wallet[0], user_id=wallet[1], address=wallet[2], satoshi=wallet[3]
+            )
+            if wallet
+            else None
+        )
 
-    def get_wallet_user_id_by_address(self, address: str) -> int | None:
-        query = "SELECT user_id FROM wallets WHERE address = ?"
-        wallet = self._db.fetch_one(query, (address,))
-        return wallet[0] if wallet else None
-
-    def get_wallet_balance_by_address(self, address: str) -> int:
-        query = "SELECT satoshi FROM wallets WHERE address = ?"
-        wallet = self._db.fetch_one(query, (address,))
-        return int(wallet[0])
-
-    def update_wallet_balance(self, wallet_id: int, amount: int) -> None:
+    def update_wallet_balance(self, wallet_id: int | None, amount: int) -> None:
         query = """
                     UPDATE wallets
                     SET satoshi = ?

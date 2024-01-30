@@ -6,7 +6,11 @@ from bitcoin_wallet.app.infra.sqlite.database import Database
 
 class ITransactionRepository(Protocol):
     def create_transaction(
-        self, from_wallet_id: int, to_wallet_id: int, amount: int, same_user: bool
+        self,
+        from_wallet_id: int | None,
+        to_wallet_id: int | None,
+        amount: int,
+        profit: float,
     ) -> None:
         pass
 
@@ -18,9 +22,12 @@ class TransactionRepository(ITransactionRepository):
         self._db = db
 
     def create_transaction(
-        self, from_wallet_id: int, to_wallet_id: int, amount: int, same_user: bool
+        self,
+        from_wallet_id: int | None,
+        to_wallet_id: int | None,
+        amount: int,
+        profit: float,
     ) -> None:
-        profit = 0 if same_user else amount * 0.015
         current_timestamp = datetime.now()
         query = (
             "INSERT INTO transactions "

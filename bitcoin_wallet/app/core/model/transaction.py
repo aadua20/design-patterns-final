@@ -24,10 +24,3 @@ class Transaction:
 
     def get_date(self) -> datetime:
         return self.date
-
-
-@dataclass
-class TransactionItem:
-    from_wallet_address: str
-    to_wallet_address: str
-    amount: int
