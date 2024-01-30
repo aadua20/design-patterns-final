@@ -34,3 +34,15 @@ def test_should_create_wallet(client: TestClient) -> None:
     assert response.json() == {
         "wallet": {"address": ANY, "balance": {"BTC": 1, "USD": ANY}}
     }
+
+
+def test_should_create_maximum_3_wallets(client: TestClient) -> None:
+    response = client.post("/users", json={"username": faker.name()})
+    api_key = response.json()["user"]["api_key"]
+    # First 3 should be created
+    for i in range(3):
+        response = client.post("/wallets", json={}, headers={"X-API-KEY": api_key})
+        assert response.status_code == 201
+    # Last one should not be created
+    response = client.post("/wallets", json={}, headers={"X-API-KEY": api_key})
+    assert response.status_code == 400
