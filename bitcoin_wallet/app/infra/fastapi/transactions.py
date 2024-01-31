@@ -12,7 +12,8 @@ from bitcoin_wallet.app.core.errors import (
 )
 from bitcoin_wallet.app.infra.fastapi.dependables import (
     TransactionServiceDependable,
-    UserServiceDependable, WalletServiceDependable,
+    UserServiceDependable,
+    WalletServiceDependable,
 )
 
 transaction_api = APIRouter(tags=["Transactions"])
@@ -45,10 +46,10 @@ class CreateTransactionRequest(BaseModel):
     response_model=TransactionItemEnvelope,
 )
 def create_transaction(
-        request: CreateTransactionRequest,
-        user_service: UserServiceDependable,
-        transaction_service: TransactionServiceDependable,
-        x_api_key: Annotated[str | None, Header()] = None,
+    request: CreateTransactionRequest,
+    user_service: UserServiceDependable,
+    transaction_service: TransactionServiceDependable,
+    x_api_key: Annotated[str | None, Header()] = None,
 ) -> dict[str, Any] | JSONResponse:
     if x_api_key is None:
         return JSONResponse(
@@ -97,10 +98,10 @@ def create_transaction(
     response_model=TransactionListEnvelope,
 )
 def get_transactions(
-        user_service: UserServiceDependable,
-        wallet_service: WalletServiceDependable,
-        transaction_service: TransactionServiceDependable,
-        x_api_key: Annotated[str | None, Header()] = None,
+    user_service: UserServiceDependable,
+    wallet_service: WalletServiceDependable,
+    transaction_service: TransactionServiceDependable,
+    x_api_key: Annotated[str | None, Header()] = None,
 ) -> TransactionListEnvelope | JSONResponse:
     if x_api_key is None:
         return JSONResponse(
@@ -117,9 +118,14 @@ def get_transactions(
     transactions = transaction_service.get_transactions()
     transaction_items = [
         TransactionItem(
-            from_wallet_address=wallet_service.get_wallet_by_id(t.get_from_wallet_id()).get_address(),
-            to_wallet_address=wallet_service.get_wallet_by_id(t.get_to_wallet_id()).get_address(),
-            amount=t.get_amount())
+            from_wallet_address=wallet_service.get_wallet_by_id(
+                t.get_from_wallet_id()  # type: ignore
+            ).get_address(),
+            to_wallet_address=wallet_service.get_wallet_by_id(
+                t.get_to_wallet_id()  # type: ignore
+            ).get_address(),
+            amount=t.get_amount(),
+        )
         for t in transactions
     ]
     return TransactionListEnvelope(transactions=transaction_items)

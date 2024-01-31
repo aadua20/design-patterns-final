@@ -18,7 +18,7 @@ class IWalletRepository(Protocol):
     def get_user_wallets(self, user_id: int) -> list[Wallet]:
         pass
 
-    def get_wallet_by_id(self, wallet_id) -> Wallet | None:
+    def get_wallet_by_id(self, wallet_id: int) -> Wallet | None:
         pass
 
 
@@ -70,11 +70,12 @@ class WalletRepository(IWalletRepository):
         results = self._db.fetch_all(query, (user_id,))
 
         user_wallets = [
-            Wallet(user_id=result[0], address=result[1], satoshi=result[2]) for result in results
+            Wallet(user_id=result[0], address=result[1], satoshi=result[2])
+            for result in results
         ]
         return user_wallets
 
-    def get_wallet_by_id(self, wallet_id) -> Wallet | None:
+    def get_wallet_by_id(self, wallet_id: int) -> Wallet | None:
         query = "SELECT * FROM wallets WHERE id = ?"
         wallet = self._db.fetch_one(query, (wallet_id,))
         return (

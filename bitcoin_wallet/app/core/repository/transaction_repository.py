@@ -7,11 +7,11 @@ from bitcoin_wallet.app.infra.sqlite.database import Database
 
 class ITransactionRepository(Protocol):
     def create_transaction(
-            self,
-            from_wallet_id: int | None,
-            to_wallet_id: int | None,
-            amount: int,
-            profit: float,
+        self,
+        from_wallet_id: int | None,
+        to_wallet_id: int | None,
+        amount: int,
+        profit: float,
     ) -> None:
         pass
 
@@ -26,11 +26,11 @@ class TransactionRepository(ITransactionRepository):
         self._db = db
 
     def create_transaction(
-            self,
-            from_wallet_id: int | None,
-            to_wallet_id: int | None,
-            amount: int,
-            profit: float,
+        self,
+        from_wallet_id: int | None,
+        to_wallet_id: int | None,
+        amount: int,
+        profit: float,
     ) -> None:
         current_timestamp = datetime.now()
         query = (
@@ -46,7 +46,9 @@ class TransactionRepository(ITransactionRepository):
             SELECT from_wallet_id, to_wallet_id, amount, profit, date
             FROM transactions
         """
-        results = self._db.fetch_all(query, )
+        results = self._db.fetch_all(
+            query,
+        )
 
         transactions = [
             Transaction(
@@ -54,7 +56,8 @@ class TransactionRepository(ITransactionRepository):
                 to_wallet=result[1],
                 amount=result[2],
                 profit=result[3],
-                date=result[4]
-            ) for result in results
+                date=result[4],
+            )
+            for result in results
         ]
         return transactions

@@ -29,7 +29,7 @@ class WalletService:
     def get_wallet_by_address(self, address: str) -> Wallet | None:
         return self._wallet_repository.get_wallet_by_address(address)
 
-    def get_wallet_by_id(self, wallet_id: str) -> Wallet | None:
+    def get_wallet_by_id(self, wallet_id: int) -> Wallet | None:
         return self._wallet_repository.get_wallet_by_id(wallet_id)
 
     def update_wallet_balance(self, wallet_id: int | None, amount: int) -> None:

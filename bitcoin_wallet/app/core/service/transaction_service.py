@@ -15,19 +15,19 @@ from bitcoin_wallet.app.core.service.wallet_service import WalletService
 
 class TransactionService:
     def __init__(
-            self,
-            transaction_repository: ITransactionRepository,
-            wallet_service: WalletService,
+        self,
+        transaction_repository: ITransactionRepository,
+        wallet_service: WalletService,
     ):
         self._transaction_repository = transaction_repository
         self._wallet_service = wallet_service
 
     def create_transaction(
-            self,
-            from_wallet_address: str,
-            to_wallet_address: str,
-            amount: int,
-            caller: User,
+        self,
+        from_wallet_address: str,
+        to_wallet_address: str,
+        amount: int,
+        caller: User,
     ) -> None:
         from_wallet = self._wallet_service.get_wallet_by_address(from_wallet_address)
         to_wallet = self._wallet_service.get_wallet_by_address(to_wallet_address)
@@ -36,8 +36,8 @@ class TransactionService:
             raise InvalidAddressError
 
         if (
-                caller.get_id() != str(from_wallet.user_id)
-                or from_wallet_address == to_wallet_address
+            caller.get_id() != str(from_wallet.user_id)
+            or from_wallet_address == to_wallet_address
         ):
             raise InvalidTransactionError
 

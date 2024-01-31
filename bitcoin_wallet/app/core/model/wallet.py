@@ -18,7 +18,7 @@ class Wallet:
     def get_satoshi(self) -> int:
         return self.satoshi
 
-    def get_id(self) -> str | None:
+    def get_id(self) -> int | None:
         return self.id
 
 

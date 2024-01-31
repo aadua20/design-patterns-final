@@ -24,9 +24,9 @@ class WalletItemEnvelope(BaseModel):
     response_model=WalletItemEnvelope,
 )
 def create_wallet(
-        user_service: UserServiceDependable,
-        wallet_service: WalletServiceDependable,
-        x_api_key: Annotated[str | None, Header()] = None,
+    user_service: UserServiceDependable,
+    wallet_service: WalletServiceDependable,
+    x_api_key: Annotated[str | None, Header()] = None,
 ) -> WalletItemEnvelope | JSONResponse:
     if x_api_key is None:
         return JSONResponse(
@@ -54,9 +54,9 @@ def create_wallet(
     response_model=WalletItemEnvelope,
 )
 def get_wallet_by_address(
-        wallet_service: WalletServiceDependable,
-        address: str = Path(..., title="The address of the wallet"),
-        x_api_key: Annotated[str | None, Header()] = None,
+    wallet_service: WalletServiceDependable,
+    address: str = Path(..., title="The address of the wallet"),
+    x_api_key: Annotated[str | None, Header()] = None,
 ) -> WalletItemEnvelope | JSONResponse:
     if x_api_key is None:
         return JSONResponse(
