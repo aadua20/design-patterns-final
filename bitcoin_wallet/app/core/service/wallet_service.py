@@ -19,9 +19,12 @@ class WalletService:
     def create_wallet(self, user_id: int) -> WalletItem:
         self._check_user_has_available_wallet_slots(user_id)
         wallet = self._wallet_repository.create_wallet(user_id)
-        btc: float = wallet.satoshi / 100_000_000
+        return self.map_wallet_to_walletItem(wallet=wallet)
+
+    def map_wallet_to_walletItem(self, wallet: Wallet) -> WalletItem:
+        btc: float = wallet.get_satoshi() / 100_000_000
         balance_dict = {"BTC": btc, "USD": self._convertor.btc_to_usd(btc)}
-        return WalletItem(address=wallet.address, balance=balance_dict)
+        return WalletItem(address=wallet.get_address(), balance=balance_dict)
 
     def get_wallet_by_address(self, address: str) -> Wallet | None:
         return self._wallet_repository.get_wallet_by_address(address)
