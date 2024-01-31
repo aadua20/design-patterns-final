@@ -15,6 +15,9 @@ class IWalletRepository(Protocol):
     def update_wallet_balance(self, wallet_id: int | None, amount: int) -> None:
         pass
 
+    def get_user_wallets(self, user_id: int) -> list[Wallet]:
+        pass
+
 
 def generate_unique_address() -> str:
     return str(uuid.uuid4())
@@ -54,3 +57,16 @@ class WalletRepository(IWalletRepository):
                     WHERE id = ?
                     """
         self._db.execute_query(query, (amount, wallet_id))
+
+    def get_user_wallets(self, user_id: int) -> list[Wallet]:
+        query = """
+            SELECT id, user_id, address, satoshi
+            FROM wallets
+            WHERE user_id = ?
+        """
+        results = self._db.fetch_all(query, (user_id,))
+
+        user_wallets = [
+            Wallet(user_id=result[0], address=result[1], satoshi=result[2]) for result in results
+        ]
+        return user_wallets

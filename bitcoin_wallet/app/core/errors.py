@@ -6,6 +6,10 @@ class DoesNotExistError(Exception):
     pass
 
 
+class MaximumNumberOfWalletsError(Exception):
+    pass
+
+
 class InvalidAddressError(Exception):
     pass
 

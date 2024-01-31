@@ -4,6 +4,7 @@ from fastapi import APIRouter, Header
 from pydantic import BaseModel
 from starlette.responses import JSONResponse
 
+from bitcoin_wallet.app.core.errors import MaximumNumberOfWalletsError
 from bitcoin_wallet.app.core.model.wallet import WalletItem
 from bitcoin_wallet.app.infra.fastapi.dependables import (
     UserServiceDependable,
@@ -38,5 +39,11 @@ def create_wallet(
             status_code=401,
             content={"message": "given API key doesn't belong to any user"},
         )
-    wallet_item: WalletItem = wallet_service.create_wallet(int(user.get_id()))
+    try:
+        wallet_item: WalletItem = wallet_service.create_wallet(int(user.get_id()))
+    except MaximumNumberOfWalletsError:
+        return JSONResponse(
+            status_code=400,
+            content={"message": "Cannot create more than 3 wallets!"},
+        )
     return WalletItemEnvelope(wallet=wallet_item)
