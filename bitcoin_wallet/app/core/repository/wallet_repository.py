@@ -18,6 +18,9 @@ class IWalletRepository(Protocol):
     def get_user_wallets(self, user_id: int) -> list[Wallet]:
         pass
 
+    def get_wallet_by_id(self, wallet_id) -> Wallet | None:
+        pass
+
 
 def generate_unique_address() -> str:
     return str(uuid.uuid4())
@@ -70,3 +73,14 @@ class WalletRepository(IWalletRepository):
             Wallet(user_id=result[0], address=result[1], satoshi=result[2]) for result in results
         ]
         return user_wallets
+
+    def get_wallet_by_id(self, wallet_id) -> Wallet | None:
+        query = "SELECT * FROM wallets WHERE id = ?"
+        wallet = self._db.fetch_one(query, (wallet_id,))
+        return (
+            Wallet(
+                id=wallet[0], user_id=wallet[1], address=wallet[2], satoshi=wallet[3]
+            )
+            if wallet
+            else None
+        )
