@@ -13,7 +13,7 @@ class WalletService:
 
     def _check_user_has_available_wallet_slots(self, user_id: int) -> None:
         user_wallets = self._wallet_repository.get_user_wallets(user_id)
-        if len(user_wallets) == WalletService.MAX_WALLET_SUPPORT:
+        if len(user_wallets) >= WalletService.MAX_WALLET_SUPPORT:
             raise MaximumNumberOfWalletsError
 
     def create_wallet(self, user_id: int) -> WalletItem:

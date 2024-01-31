@@ -9,13 +9,13 @@ class IWalletRepository(Protocol):
     def create_wallet(self, user_id: int) -> Wallet:
         pass
 
-    def get_user_wallets(self, user_id: int) -> list[Wallet]:
-        pass
-
     def get_wallet_by_address(self, address: str) -> Wallet | None:
         pass
 
     def update_wallet_balance(self, wallet_id: int | None, amount: int) -> None:
+        pass
+
+    def get_user_wallets(self, user_id: int) -> list[Wallet]:
         pass
 
 
@@ -60,14 +60,13 @@ class WalletRepository(IWalletRepository):
 
     def get_user_wallets(self, user_id: int) -> list[Wallet]:
         query = """
-            SELECT id, address, satoshi
+            SELECT id, user_id, address, satoshi
             FROM wallets
             WHERE user_id = ?
         """
         results = self._db.fetch_all(query, (user_id,))
-        print(results)
 
         user_wallets = [
-            Wallet(address=result[1], satoshi=result[2]) for result in results
+            Wallet(user_id=result[0], address=result[1], satoshi=result[2]) for result in results
         ]
         return user_wallets
