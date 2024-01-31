@@ -67,6 +67,7 @@ class WalletRepository(IWalletRepository):
         results = self._db.fetch_all(query, (user_id,))
 
         user_wallets = [
-            Wallet(user_id=result[0], address=result[1], satoshi=result[2]) for result in results
+            Wallet(user_id=result[0], address=result[1], satoshi=result[2])
+            for result in results
         ]
         return user_wallets
