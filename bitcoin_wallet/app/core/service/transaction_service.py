@@ -1,8 +1,11 @@
+from typing import List
+
 from bitcoin_wallet.app.core.errors import (
     InvalidAddressError,
     InvalidBalanceError,
     InvalidTransactionError,
 )
+from bitcoin_wallet.app.core.model.transaction import Transaction
 from bitcoin_wallet.app.core.model.user import User
 from bitcoin_wallet.app.core.repository.transaction_repository import (
     ITransactionRepository,
@@ -54,3 +57,6 @@ class TransactionService:
             from_wallet.id, from_balance - amount
         )
         self._wallet_service.update_wallet_balance(to_wallet.id, to_balance + amount)
+
+    def get_transactions(self) -> List[Transaction]:
+        return self._transaction_repository.get_transactions()

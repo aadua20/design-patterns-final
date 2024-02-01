@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Header
+from fastapi import APIRouter, Header, Path
 from pydantic import BaseModel
 from starlette.responses import JSONResponse
 
@@ -47,3 +47,26 @@ def create_wallet(
             content={"message": "Cannot create more than 3 wallets!"},
         )
     return WalletItemEnvelope(wallet=wallet_item)
+
+
+@wallet_api.get(
+    "/wallets/{address}",
+    response_model=WalletItemEnvelope,
+)
+def get_wallet_by_address(
+    wallet_service: WalletServiceDependable,
+    address: str = Path(..., title="The address of the wallet"),
+    x_api_key: Annotated[str | None, Header()] = None,
+) -> WalletItemEnvelope | JSONResponse:
+    if x_api_key is None:
+        return JSONResponse(
+            status_code=401,
+            content={"message": "API key is missing"},
+        )
+    wallet = wallet_service.get_wallet_by_address(address)
+    if wallet is None:
+        return JSONResponse(
+            status_code=404,
+            content={"message": "Wallet not found for the given address"},
+        )
+    return WalletItemEnvelope(wallet=wallet_service.map_wallet_to_walletItem(wallet))
