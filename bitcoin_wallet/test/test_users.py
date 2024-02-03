@@ -14,7 +14,7 @@ def client() -> TestClient:
     return TestClient(init_app())
 
 
-def test_should_not_create_wallet_with_empty_api_key(client: TestClient) -> None:
+def test_should_create_user(client: TestClient) -> None:
     username = faker.name()
     response = client.post("/users", json={"username": username})
     assert response.status_code == 201
@@ -22,6 +22,10 @@ def test_should_not_create_wallet_with_empty_api_key(client: TestClient) -> None
         "user": {"api_key": ANY, "username": username, "wallet_count": 0}
     }
 
+
+def test_should_not_create_user_with_same_username(client: TestClient) -> None:
+    username = faker.name()
+    client.post("/users", json={"username": username})
     response = client.post("/users", json={"username": username})
     assert response.status_code == 409
     assert response.json() == {
