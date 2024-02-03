@@ -63,6 +63,7 @@ def create_wallet(
 )
 def get_wallet_by_address(
     wallet_service: WalletServiceDependable,
+    user_service: UserServiceDependable,
     address: str = Path(..., title="The address of the wallet"),
     x_api_key: Annotated[str | None, Header()] = None,
 ) -> WalletItemEnvelope | JSONResponse:
@@ -70,6 +71,12 @@ def get_wallet_by_address(
         return JSONResponse(
             status_code=401,
             content={"message": "API key is missing"},
+        )
+    user = user_service.get_user_by_api_key(x_api_key)
+    if user is None:
+        return JSONResponse(
+            status_code=401,
+            content={"message": "given API key doesn't belong to any user"},
         )
     wallet = wallet_service.get_wallet_by_address(address)
     if wallet is None:
@@ -86,6 +93,7 @@ def get_wallet_by_address(
 )
 def get_wallet_transactions(
     wallet_service: WalletServiceDependable,
+    user_service: UserServiceDependable,
     transaction_service: TransactionServiceDependable,
     address: str = Path(..., title="The address of the wallet"),
     x_api_key: Annotated[str | None, Header()] = None,
@@ -94,6 +102,12 @@ def get_wallet_transactions(
         return JSONResponse(
             status_code=401,
             content={"message": "API key is missing"},
+        )
+    user = user_service.get_user_by_api_key(x_api_key)
+    if user is None:
+        return JSONResponse(
+            status_code=401,
+            content={"message": "given API key doesn't belong to any user"},
         )
     try:
         transactions = transaction_service.get_wallet_transactions(address)
