@@ -62,6 +62,9 @@ class TransactionService:
     def get_transactions(self) -> List[Transaction]:
         return self._transaction_repository.get_transactions()
 
+    def get_user_transactions(self, user_id: int) -> List[Transaction]:
+        return self._transaction_repository.get_user_transactions(user_id)
+
     def get_wallet_transactions(self, address: str) -> List[Transaction]:
         wallet = self._wallet_service.get_wallet_by_address(address)
         if wallet is None:

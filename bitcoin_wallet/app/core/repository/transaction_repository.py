@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Protocol
+from typing import List, Protocol
 
 from bitcoin_wallet.app.core.model.transaction import Statistics, Transaction
 from bitcoin_wallet.app.infra.sqlite.database import Database
@@ -22,6 +22,9 @@ class ITransactionRepository(Protocol):
         pass
 
     def get_statistics(self) -> Statistics:
+        pass
+
+    def get_user_transactions(self, user_id: int) -> List[Transaction]:
         pass
 
 
@@ -67,6 +70,26 @@ class TransactionRepository(ITransactionRepository):
             for result in results
         ]
         return transactions
+
+    def get_user_transactions(self, user_id: int) -> List[Transaction]:
+        wallets: List[int] = self.get_user_wallets(user_id)
+        all_transactions: List[Transaction] = []
+
+        for wallet_id in wallets:
+            wallet_transactions = self.get_wallet_transactions(wallet_id)
+            all_transactions.extend(wallet_transactions)
+
+        return all_transactions
+
+    def get_user_wallets(self, user_id: int) -> List[int]:
+        query = """
+                    SELECT id
+                    FROM wallets
+                    WHERE user_id = ?
+                """
+        wallets = self._db.fetch_all(query, (user_id,))
+        wallet_ids = [wallet[0] for wallet in wallets]
+        return wallet_ids
 
     def get_wallet_transactions(self, wallet_id: int | None) -> list[Transaction]:
         query = """
