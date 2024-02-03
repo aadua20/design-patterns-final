@@ -40,7 +40,7 @@ def test_should_not_create_transaction_with_invalid_api_key(client: TestClient) 
 
 
 def test_should_not_create_transaction_with_invalid_wallet_address(
-        client: TestClient,
+    client: TestClient,
 ) -> None:
     response = client.post("/users", json={"username": faker.name()})
     api_key = response.json()["user"]["api_key"]
@@ -58,7 +58,7 @@ def test_should_not_create_transaction_with_invalid_wallet_address(
 
 
 def test_should_not_create_transaction_to_the_same_wallet_address(
-        client: TestClient,
+    client: TestClient,
 ) -> None:
     response = client.post("/users", json={"username": faker.name()})
     api_key = response.json()["user"]["api_key"]
@@ -78,7 +78,7 @@ def test_should_not_create_transaction_to_the_same_wallet_address(
 
 
 def test_should_not_create_transaction_without_your_wallet_address(
-        client: TestClient,
+    client: TestClient,
 ) -> None:
     response = client.post("/users", json={"username": faker.name()})
     api_key = response.json()["user"]["api_key"]
@@ -102,7 +102,7 @@ def test_should_not_create_transaction_without_your_wallet_address(
 
 
 def test_should_not_create_transaction_with_insufficient_funds(
-        client: TestClient,
+    client: TestClient,
 ) -> None:
     response = client.post("/users", json={"username": faker.name()})
     api_key = response.json()["user"]["api_key"]
@@ -126,7 +126,7 @@ def test_should_not_create_transaction_with_insufficient_funds(
 
 
 def test_should_create_transaction(
-        client: TestClient,
+    client: TestClient,
 ) -> None:
     response = client.post("/users", json={"username": faker.name()})
     api_key = response.json()["user"]["api_key"]
@@ -154,7 +154,7 @@ def test_should_create_transaction(
 
 
 def test_get_wallet_without_api_key(client: TestClient) -> None:
-    response = client.get(f"/transactions", headers={})
+    response = client.get("/transactions", headers={})
     assert response.status_code == 401
     assert response.json() == {"message": "API key is missing"}
 
@@ -173,7 +173,7 @@ def test_get_transactions_with_valid_api_key(client: TestClient) -> None:
     client.post("/wallets", json={}, headers={"X-API-KEY": api_key})
     response = client.get("/transactions", headers={"X-API-KEY": api_key})
     assert response.status_code == 200
-    assert response.json() == {'message': f'No transactions found for {name}.'}
+    assert response.json() == {"message": f"No transactions found for {name}."}
 
 
 def test_get_transactions_no_transactions_found(client: TestClient) -> None:
