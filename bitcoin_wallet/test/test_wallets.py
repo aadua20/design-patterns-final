@@ -46,3 +46,39 @@ def test_should_create_maximum_3_wallets(client: TestClient) -> None:
     # Last one should not be created
     response = client.post("/wallets", json={}, headers={"X-API-KEY": api_key})
     assert response.status_code == 400
+
+
+def test_get_wallet_transactions_without_api_key(client: TestClient) -> None:
+    response = client.get(f"/wallets/adress/transactions", headers={})
+    assert response.status_code == 401
+    assert response.json() == {"message": "API key is missing"}
+
+
+def test_get_wallet_transactions_with_valid_api_key(client: TestClient) -> None:
+    response = client.post("/users", json={"username": faker.name()})
+    api_key = response.json()["user"]["api_key"]
+    create_wallet_response = client.post("/wallets", json={}, headers={"X-API-KEY": api_key})
+    wallet_address = create_wallet_response.json()["wallet"]["address"]
+
+    response = client.get(f"/wallets/{wallet_address}/transactions", headers={"X-API-KEY": api_key})
+    assert response.status_code == 200
+    assert response.json() == {"transactions": []}
+
+
+def test_get_wallet_transactions_with_invalid_api_key(client: TestClient) -> None:
+    response = client.post("/users", json={"username": faker.name()})
+    api_key = response.json()["user"]["api_key"]
+    create_wallet_response = client.post("/wallets", json={}, headers={"X-API-KEY": api_key})
+    wallet_address = create_wallet_response.json()["wallet"]["address"]
+
+    response = client.get(f"/wallets/{wallet_address}/transactions", headers={"X-API-KEY": "api_key"})
+    assert response.status_code == 401
+    assert response.json() == {'message': "given API key doesn't belong to any user"}
+
+
+def test_get_wallet_transactions_with_invalid_address(client: TestClient) -> None:
+    response = client.post("/users", json={"username": faker.name()})
+    api_key = response.json()["user"]["api_key"]
+    response = client.get("/wallets/invalid_address/transactions", headers={"X-API-KEY": api_key})
+    assert response.status_code == 404
+    assert response.json() == {"message": "Wallet not found for the given address"}
