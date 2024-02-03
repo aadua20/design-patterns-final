@@ -40,7 +40,7 @@ def test_should_not_create_transaction_with_invalid_api_key(client: TestClient) 
 
 
 def test_should_not_create_transaction_with_invalid_wallet_address(
-    client: TestClient,
+        client: TestClient,
 ) -> None:
     response = client.post("/users", json={"username": faker.name()})
     api_key = response.json()["user"]["api_key"]
@@ -58,7 +58,7 @@ def test_should_not_create_transaction_with_invalid_wallet_address(
 
 
 def test_should_not_create_transaction_to_the_same_wallet_address(
-    client: TestClient,
+        client: TestClient,
 ) -> None:
     response = client.post("/users", json={"username": faker.name()})
     api_key = response.json()["user"]["api_key"]
@@ -78,7 +78,7 @@ def test_should_not_create_transaction_to_the_same_wallet_address(
 
 
 def test_should_not_create_transaction_without_your_wallet_address(
-    client: TestClient,
+        client: TestClient,
 ) -> None:
     response = client.post("/users", json={"username": faker.name()})
     api_key = response.json()["user"]["api_key"]
@@ -101,8 +101,32 @@ def test_should_not_create_transaction_without_your_wallet_address(
     assert response.json() == {"message": "invalid/alogical transaction."}
 
 
-def test_should_not_create_transaction_without_enough_amount_address(
-    client: TestClient,
+def test_should_not_create_transaction_with_insufficient_funds(
+        client: TestClient,
+) -> None:
+    response = client.post("/users", json={"username": faker.name()})
+    api_key = response.json()["user"]["api_key"]
+    wallet_response = client.post("/wallets", json={}, headers={"X-API-KEY": api_key})
+    wallet_address_from = wallet_response.json()["wallet"]["address"]
+    wallet_response = client.post("/wallets", json={}, headers={"X-API-KEY": api_key})
+    wallet_address_to = wallet_response.json()["wallet"]["address"]
+    response = client.post(
+        "/transactions",
+        json={
+            "from_wallet_address": wallet_address_from,
+            "to_wallet_address": wallet_address_to,
+            "amount": 1000000000000000000000,
+        },
+        headers={"X-API-KEY": api_key},
+    )
+    assert response.status_code == 400
+    assert response.json() == {
+        "message": "Insufficient funds in the source wallet or invalid amount."
+    }
+
+
+def test_should_create_transaction(
+        client: TestClient,
 ) -> None:
     response = client.post("/users", json={"username": faker.name()})
     api_key = response.json()["user"]["api_key"]
@@ -127,3 +151,49 @@ def test_should_not_create_transaction_without_enough_amount_address(
             "amount": 100,
         }
     }
+
+
+def test_get_wallet_without_api_key(client: TestClient) -> None:
+    response = client.get(f"/transactions", headers={})
+    assert response.status_code == 401
+    assert response.json() == {"message": "API key is missing"}
+
+
+def test_get_transactions_with_invalid_api_key(client: TestClient) -> None:
+    response = client.get("/transactions", headers={"X-API-KEY": "api_key"})
+    assert response.status_code == 401
+    assert response.json() == {"message": "given API key doesn't belong to any user"}
+
+
+def test_get_transactions_with_valid_api_key(client: TestClient) -> None:
+    name = faker.name()
+    response = client.post("/users", json={"username": name})
+    api_key = response.json()["user"]["api_key"]
+    client.post("/wallets", json={}, headers={"X-API-KEY": api_key})
+    client.post("/wallets", json={}, headers={"X-API-KEY": api_key})
+    response = client.get("/transactions", headers={"X-API-KEY": api_key})
+    assert response.status_code == 200
+    assert response.json() == {'message': f'No transactions found for {name}.'}
+
+
+def test_get_transactions_no_transactions_found(client: TestClient) -> None:
+    response = client.post("/users", json={"username": faker.name()})
+    api_key = response.json()["user"]["api_key"]
+
+    wallet_response = client.post("/wallets", json={}, headers={"X-API-KEY": api_key})
+    wallet_address_from = wallet_response.json()["wallet"]["address"]
+    wallet_response = client.post("/wallets", json={}, headers={"X-API-KEY": api_key})
+    wallet_address_to = wallet_response.json()["wallet"]["address"]
+    client.post(
+        "/transactions",
+        json={
+            "from_wallet_address": wallet_address_from,
+            "to_wallet_address": wallet_address_to,
+            "amount": 100,
+        },
+        headers={"X-API-KEY": api_key},
+    )
+
+    response = client.get("/transactions", headers={"X-API-KEY": api_key})
+    assert response.status_code == 200
+    assert len(response.json()["transactions"]) == 1
