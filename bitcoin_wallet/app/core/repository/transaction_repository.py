@@ -79,7 +79,7 @@ class TransactionRepository(ITransactionRepository):
             wallet_transactions = self.get_wallet_transactions(wallet_id)
             all_transactions.extend(wallet_transactions)
 
-        return all_transactions
+        return list(set(all_transactions))
 
     def get_user_wallets(self, user_id: int) -> List[int]:
         query = """
