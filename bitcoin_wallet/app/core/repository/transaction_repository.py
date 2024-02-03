@@ -18,6 +18,9 @@ class ITransactionRepository(Protocol):
     def get_transactions(self) -> list[Transaction]:
         pass
 
+    def get_wallet_transactions(self, wallet_id: int | None) -> list[Transaction]:
+        pass
+
 
 class TransactionRepository(ITransactionRepository):
     _db: Database
@@ -48,6 +51,33 @@ class TransactionRepository(ITransactionRepository):
         """
         results = self._db.fetch_all(
             query,
+        )
+
+        transactions = [
+            Transaction(
+                from_wallet=result[0],
+                to_wallet=result[1],
+                amount=result[2],
+                profit=result[3],
+                date=result[4],
+            )
+            for result in results
+        ]
+        return transactions
+
+    def get_wallet_transactions(self, wallet_id: int | None) -> list[Transaction]:
+        query = """
+            SELECT from_wallet_id, to_wallet_id, amount, profit, date
+            FROM transactions
+            WHERE from_wallet_id = ? OR to_wallet_id = ?
+            ORDER BY date
+        """
+        results = self._db.fetch_all(
+            query,
+            (
+                wallet_id,
+                wallet_id,
+            ),
         )
 
         transactions = [

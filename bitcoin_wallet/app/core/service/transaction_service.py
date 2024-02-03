@@ -4,6 +4,7 @@ from bitcoin_wallet.app.core.errors import (
     InvalidAddressError,
     InvalidBalanceError,
     InvalidTransactionError,
+    InvalidWalletError,
 )
 from bitcoin_wallet.app.core.model.transaction import Transaction
 from bitcoin_wallet.app.core.model.user import User
@@ -60,3 +61,9 @@ class TransactionService:
 
     def get_transactions(self) -> List[Transaction]:
         return self._transaction_repository.get_transactions()
+
+    def get_wallet_transactions(self, address: str) -> List[Transaction]:
+        wallet = self._wallet_service.get_wallet_by_address(address)
+        if wallet is None:
+            raise InvalidWalletError
+        return self._transaction_repository.get_wallet_transactions(wallet.get_id())
