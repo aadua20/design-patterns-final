@@ -11,6 +11,7 @@ from bitcoin_wallet.app.core.service.transaction_service import TransactionServi
 from bitcoin_wallet.app.core.service.user_service import UserService
 from bitcoin_wallet.app.core.service.wallet_service import WalletService
 from bitcoin_wallet.app.infra.fastapi import transaction_api, user_api, wallet_api
+from bitcoin_wallet.app.infra.fastapi.statistics import statistics_api
 from bitcoin_wallet.app.infra.sqlite.database import Database, DatabaseInitializer
 
 
@@ -23,6 +24,7 @@ def init_app() -> FastAPI:
     app.include_router(user_api)
     app.include_router(wallet_api)
     app.include_router(transaction_api)
+    app.include_router(statistics_api)
 
     wallet_repository = WalletRepository(db)
     convertor = CoingateConvertService()

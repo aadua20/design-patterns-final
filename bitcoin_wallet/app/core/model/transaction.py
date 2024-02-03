@@ -24,3 +24,9 @@ class Transaction:
 
     def get_date(self) -> datetime:
         return self.date
+
+
+@dataclass
+class Statistics:
+    num_transactions: int
+    profit: float

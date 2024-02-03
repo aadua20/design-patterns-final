@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Protocol
 
-from bitcoin_wallet.app.core.model.transaction import Transaction
+from bitcoin_wallet.app.core.model.transaction import Statistics, Transaction
 from bitcoin_wallet.app.infra.sqlite.database import Database
 
 
@@ -19,6 +19,9 @@ class ITransactionRepository(Protocol):
         pass
 
     def get_wallet_transactions(self, wallet_id: int | None) -> list[Transaction]:
+        pass
+
+    def get_statistics(self) -> Statistics:
         pass
 
 
@@ -91,3 +94,8 @@ class TransactionRepository(ITransactionRepository):
             for result in results
         ]
         return transactions
+
+    def get_statistics(self) -> Statistics:
+        transactions = self.get_transactions()
+        profit = sum(t.get_profit() for t in transactions)
+        return Statistics(num_transactions=len(transactions), profit=profit)
