@@ -20,3 +20,7 @@ class InvalidBalanceError(Exception):
 
 class InvalidTransactionError(Exception):
     pass
+
+
+class InvalidWalletError(Exception):
+    pass
