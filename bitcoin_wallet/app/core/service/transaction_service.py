@@ -6,7 +6,7 @@ from bitcoin_wallet.app.core.errors import (
     InvalidTransactionError,
     InvalidWalletError,
 )
-from bitcoin_wallet.app.core.model.transaction import Transaction
+from bitcoin_wallet.app.core.model.transaction import Statistics, Transaction
 from bitcoin_wallet.app.core.model.user import User
 from bitcoin_wallet.app.core.repository.transaction_repository import (
     ITransactionRepository,
@@ -67,3 +67,6 @@ class TransactionService:
         if wallet is None:
             raise InvalidWalletError
         return self._transaction_repository.get_wallet_transactions(wallet.get_id())
+
+    def get_statistics(self) -> Statistics:
+        return self._transaction_repository.get_statistics()
