@@ -33,12 +33,6 @@ def get_statistics(
             status_code=401,
             content={"message": "API key is missing"},
         )
-    user = user_service.get_user_by_api_key(x_api_key)
-    if user is None:
-        return JSONResponse(
-            status_code=401,
-            content={"message": "given API key doesn't belong to any user"},
-        )
     if x_api_key != os.getenv("ADMIN_API_KEY"):
         return JSONResponse(
             status_code=401,
