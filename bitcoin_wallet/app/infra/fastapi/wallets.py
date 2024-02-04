@@ -8,16 +8,14 @@ from bitcoin_wallet.app.core.errors import (
     InvalidWalletError,
     MaximumNumberOfWalletsError,
 )
+from bitcoin_wallet.app.core.model.transaction import TransactionItem
 from bitcoin_wallet.app.core.model.wallet import WalletItem
 from bitcoin_wallet.app.infra.fastapi.dependables import (
     TransactionServiceDependable,
     UserServiceDependable,
     WalletServiceDependable,
 )
-from bitcoin_wallet.app.infra.fastapi.transactions import (
-    TransactionItem,
-    TransactionListEnvelope,
-)
+from bitcoin_wallet.app.infra.fastapi.transactions import TransactionListEnvelope
 
 wallet_api = APIRouter(tags=["Wallets"])
 

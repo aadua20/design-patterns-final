@@ -13,3 +13,4 @@ Faker
 starlette
 httpx
 types-requests
+requests

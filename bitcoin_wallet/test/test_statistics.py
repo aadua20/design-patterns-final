@@ -16,7 +16,7 @@ def client() -> TestClient:
 
 
 def test_get_statistics_with_missing_api_key(client: TestClient) -> None:
-    response = client.get("/statistics", headers={})
+    response = client.get("/statistics")
     assert response.status_code == 401
     assert response.json() == {"message": "API key is missing"}
 
@@ -34,7 +34,7 @@ def test_get_statistics_with_valid_api_key_and_existing_user(
 
 def test_get_statistics_with_valid_admin_user(client: TestClient) -> None:
     response = client.get(
-        "/statistics", headers={"X-API-KEY": os.getenv("ADMIN_API_KEY")}  # type: ignore
+        "/statistics", headers={"X-API-KEY": str(os.getenv("ADMIN_API_KEY"))}
     )
     assert response.status_code == 200
     assert response.json() == {"statistics": {"num_transactions": ANY, "profit": ANY}}

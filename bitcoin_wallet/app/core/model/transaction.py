@@ -45,4 +45,11 @@ class Transaction:
 @dataclass
 class Statistics:
     num_transactions: int
-    profit: float
+    profit: int
+
+
+@dataclass
+class TransactionItem:
+    from_wallet_address: str
+    to_wallet_address: str
+    amount: int

@@ -154,7 +154,7 @@ def test_should_create_transaction(
 
 
 def test_get_wallet_without_api_key(client: TestClient) -> None:
-    response = client.get("/transactions", headers={})
+    response = client.get("/transactions")
     assert response.status_code == 401
     assert response.json() == {"message": "API key is missing"}
 

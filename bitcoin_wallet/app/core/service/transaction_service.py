@@ -1,4 +1,4 @@
-from typing import List
+from math import ceil
 
 from bitcoin_wallet.app.core.errors import (
     InvalidAddressError,
@@ -15,6 +15,8 @@ from bitcoin_wallet.app.core.service.wallet_service import WalletService
 
 
 class TransactionService:
+    TAX_PERCENTAGE = 0.015
+
     def __init__(
         self,
         transaction_repository: ITransactionRepository,
@@ -49,7 +51,7 @@ class TransactionService:
             raise InvalidBalanceError
 
         same_user = from_wallet.user_id == to_wallet.user_id
-        profit = 0 if same_user else amount * 0.015
+        profit = 0 if same_user else ceil(amount * self.TAX_PERCENTAGE)
         self._transaction_repository.create_transaction(
             from_wallet.id, to_wallet.id, amount, profit
         )
@@ -59,13 +61,10 @@ class TransactionService:
         )
         self._wallet_service.update_wallet_balance(to_wallet.id, to_balance + amount)
 
-    def get_transactions(self) -> List[Transaction]:
-        return self._transaction_repository.get_transactions()
-
-    def get_user_transactions(self, user_id: int) -> List[Transaction]:
+    def get_user_transactions(self, user_id: int) -> list[Transaction]:
         return self._transaction_repository.get_user_transactions(user_id)
 
-    def get_wallet_transactions(self, address: str) -> List[Transaction]:
+    def get_wallet_transactions(self, address: str) -> list[Transaction]:
         wallet = self._wallet_service.get_wallet_by_address(address)
         if wallet is None:
             raise InvalidWalletError

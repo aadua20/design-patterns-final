@@ -6,7 +6,7 @@ from bitcoin_wallet.app.core.repository.transaction_repository import (
 )
 from bitcoin_wallet.app.core.repository.user_repository import UserRepository
 from bitcoin_wallet.app.core.repository.wallet_repository import WalletRepository
-from bitcoin_wallet.app.core.service.convert_service import CoingateConvertService
+from bitcoin_wallet.app.core.service.convert_service import ConvertService
 from bitcoin_wallet.app.core.service.transaction_service import TransactionService
 from bitcoin_wallet.app.core.service.user_service import UserService
 from bitcoin_wallet.app.core.service.wallet_service import WalletService
@@ -27,14 +27,14 @@ def init_app() -> FastAPI:
     app.include_router(statistics_api)
 
     wallet_repository = WalletRepository(db)
-    convertor = CoingateConvertService()
+    user_repository = UserRepository(db)
+    transaction_repository = TransactionRepository(db)
+    convertor = ConvertService()
 
-    app.state.users = UserRepository(db)
-    app.state.transactions = TransactionRepository(db)
-    app.state.user_service = UserService(app.state.users)
+    app.state.user_service = UserService(user_repository)
     app.state.wallet_service = WalletService(wallet_repository, convertor)
     app.state.transaction_service = TransactionService(
-        app.state.transactions, app.state.wallet_service
+        transaction_repository, app.state.wallet_service
     )
 
     return app

@@ -22,7 +22,7 @@ class WalletService:
         return self.map_wallet_to_walletItem(wallet=wallet)
 
     def map_wallet_to_walletItem(self, wallet: Wallet) -> WalletItem:
-        btc: float = wallet.get_satoshi() / 100_000_000
+        btc: float = self._convertor.satoshi_to_btc(wallet.get_satoshi())
         balance_dict = {"BTC": btc, "USD": self._convertor.btc_to_usd(btc)}
         return WalletItem(address=wallet.get_address(), balance=balance_dict)
 

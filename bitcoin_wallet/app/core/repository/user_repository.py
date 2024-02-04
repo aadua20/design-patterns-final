@@ -45,7 +45,10 @@ class UserRepository(IUserRepository):
         user = self._db.fetch_one(query, (user_id,))
         return (
             User(
-                user_id=user[0], username=user[1], api_key=user[2], wallet_count=user[3]
+                user_id=int(user[0]),
+                username=user[1],
+                api_key=user[2],
+                wallet_count=int(user[3]),
             )
             if user
             else None
@@ -61,7 +64,6 @@ class UserRepository(IUserRepository):
             "SELECT id, username, api_key, wallet_count FROM users WHERE api_key = ?"
         )
         user = self._db.fetch_one(query, (api_key,))
-        # TODO: remove code duplication
         return (
             User(
                 user_id=int(user[0]),

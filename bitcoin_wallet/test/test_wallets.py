@@ -49,7 +49,7 @@ def test_should_create_maximum_3_wallets(client: TestClient) -> None:
 
 
 def test_get_wallet_transactions_without_api_key(client: TestClient) -> None:
-    response = client.get("/wallets/address/transactions", headers={})
+    response = client.get("/wallets/address/transactions")
     assert response.status_code == 401
     assert response.json() == {"message": "API key is missing"}
 
@@ -95,7 +95,7 @@ def test_get_wallet_transactions_with_invalid_address(client: TestClient) -> Non
 
 
 def test_get_wallet_without_api_key(client: TestClient) -> None:
-    response = client.get("/wallets/address", headers={})
+    response = client.get("/wallets/address")
     assert response.status_code == 401
     assert response.json() == {"message": "API key is missing"}
 

@@ -7,7 +7,7 @@ from starlette.responses import JSONResponse
 
 from bitcoin_wallet.app.core.errors import ExistsError
 from bitcoin_wallet.app.core.model.user import User
-from bitcoin_wallet.app.infra.fastapi.dependables import UserRepositoryDependable
+from bitcoin_wallet.app.infra.fastapi.dependables import UserServiceDependable
 
 user_api = APIRouter(tags=["Users"])
 
@@ -36,7 +36,7 @@ class UserListEnvelope(BaseModel):
     response_model=UserItemEnvelope,
 )
 def create_user(
-    request: CreateUserRequest, users: UserRepositoryDependable
+    request: CreateUserRequest, users: UserServiceDependable
 ) -> dict[str, Any] | JSONResponse:
     try:
         user = User(**request.model_dump())

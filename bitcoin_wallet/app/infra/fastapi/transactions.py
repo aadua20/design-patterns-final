@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Header
@@ -10,6 +9,7 @@ from bitcoin_wallet.app.core.errors import (
     InvalidBalanceError,
     InvalidTransactionError,
 )
+from bitcoin_wallet.app.core.model.transaction import TransactionItem
 from bitcoin_wallet.app.infra.fastapi.dependables import (
     TransactionServiceDependable,
     UserServiceDependable,
@@ -17,13 +17,6 @@ from bitcoin_wallet.app.infra.fastapi.dependables import (
 )
 
 transaction_api = APIRouter(tags=["Transactions"])
-
-
-@dataclass
-class TransactionItem:
-    from_wallet_address: str
-    to_wallet_address: str
-    amount: int
 
 
 class TransactionItemEnvelope(BaseModel):

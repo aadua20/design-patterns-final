@@ -6,10 +6,7 @@ from pydantic import BaseModel
 from starlette.responses import JSONResponse
 
 from bitcoin_wallet.app.core.model.transaction import Statistics
-from bitcoin_wallet.app.infra.fastapi.dependables import (
-    TransactionServiceDependable,
-    UserServiceDependable,
-)
+from bitcoin_wallet.app.infra.fastapi.dependables import TransactionServiceDependable
 
 statistics_api = APIRouter(tags=["Statistics"])
 
@@ -24,7 +21,6 @@ class StatisticsEnvelope(BaseModel):
     response_model=StatisticsEnvelope,
 )
 def get_statistics(
-    user_service: UserServiceDependable,
     transaction_service: TransactionServiceDependable,
     x_api_key: Annotated[str | None, Header()] = None,
 ) -> StatisticsEnvelope | JSONResponse:
