@@ -21,3 +21,10 @@ class User:
 
     def get_api_key(self) -> str:
         return str(self.api_key)
+
+
+@dataclass
+class UserItem:
+    api_key: UUID
+    username: str
+    wallet_count: int
