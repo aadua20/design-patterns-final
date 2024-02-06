@@ -45,7 +45,7 @@ class Transaction:
 @dataclass
 class Statistics:
     num_transactions: int
-    profit: int
+    profit_in_satoshi: int
 
 
 @dataclass

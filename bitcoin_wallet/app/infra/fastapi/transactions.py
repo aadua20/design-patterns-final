@@ -108,11 +108,6 @@ def get_transactions(
             content={"message": "given API key doesn't belong to any user"},
         )
     transactions = transaction_service.get_user_transactions(int(user.get_id()))
-    if not transactions:
-        return JSONResponse(
-            status_code=200,
-            content={"message": f"No transactions found for {user.get_username()}."},
-        )
     transaction_items = [
         TransactionItem(
             from_wallet_address=wallet_service.get_wallet_by_id(

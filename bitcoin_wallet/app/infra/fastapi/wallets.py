@@ -82,6 +82,13 @@ def get_wallet_by_address(
             status_code=404,
             content={"message": "Wallet not found for the given address"},
         )
+    if not wallet_service.check_user_has_wallet(
+        int(user.get_id()), wallet.get_address()
+    ):
+        return JSONResponse(
+            status_code=403,
+            content={"message": "You do not have permission to access this wallet"},
+        )
     return WalletItemEnvelope(wallet=wallet_service.map_wallet_to_walletItem(wallet))
 
 
@@ -113,6 +120,14 @@ def get_wallet_transactions(
         return JSONResponse(
             status_code=404,
             content={"message": "Wallet not found for the given address"},
+        )
+    wallet = wallet_service.get_wallet_by_address(address)
+    if not wallet_service.check_user_has_wallet(
+        int(user.get_id()), wallet.get_address()  # type: ignore
+    ):
+        return JSONResponse(
+            status_code=403,
+            content={"message": "You do not have permission to access this wallet"},
         )
     transaction_items = [
         TransactionItem(

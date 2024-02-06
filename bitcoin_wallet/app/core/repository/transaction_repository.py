@@ -87,7 +87,7 @@ class TransactionRepository(ITransactionRepository):
     def get_statistics(self) -> Statistics:
         transactions = self._get_transactions()
         profit = sum(t.get_profit() for t in transactions)
-        return Statistics(num_transactions=len(transactions), profit=profit)
+        return Statistics(num_transactions=len(transactions), profit_in_satoshi=profit)
 
     def _get_transactions(self) -> list[Transaction]:
         query = """
