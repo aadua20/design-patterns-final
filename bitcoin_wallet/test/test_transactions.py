@@ -173,7 +173,7 @@ def test_get_transactions_with_valid_api_key(client: TestClient) -> None:
     client.post("/wallets", json={}, headers={"X-API-KEY": api_key})
     response = client.get("/transactions", headers={"X-API-KEY": api_key})
     assert response.status_code == 200
-    assert response.json() == {"message": f"No transactions found for {name}."}
+    assert response.json() == {"transactions": []}
 
 
 def test_get_transactions_no_transactions_found(client: TestClient) -> None:
@@ -197,3 +197,20 @@ def test_get_transactions_no_transactions_found(client: TestClient) -> None:
     response = client.get("/transactions", headers={"X-API-KEY": api_key})
     assert response.status_code == 200
     assert len(response.json()["transactions"]) == 1
+
+
+def test_should_not_get_others_wallets_transactions(client: TestClient) -> None:
+    response = client.post("/users", json={"username": faker.name()})
+    api_key_1 = response.json()["user"]["api_key"]
+
+    response = client.post("/users", json={"username": faker.name()})
+    api_key_2 = response.json()["user"]["api_key"]
+
+    create_wallet_response = client.post(
+        "/wallets", json={}, headers={"X-API-KEY": api_key_1}
+    )
+    wallet_address = create_wallet_response.json()["wallet"]["address"]
+    response = client.get(
+        f"/wallets/{wallet_address}/transactions", headers={"X-API-KEY": api_key_2}
+    )
+    assert response.status_code == 403

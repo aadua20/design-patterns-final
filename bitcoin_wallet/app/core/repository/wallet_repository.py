@@ -50,7 +50,10 @@ class WalletRepository(IWalletRepository):
         wallet = self._db.fetch_one(query, (address,))
         return (
             Wallet(
-                id=wallet[0], user_id=wallet[1], address=wallet[2], satoshi=wallet[3]
+                id=wallet[0],
+                user_id=int(wallet[1]),
+                address=wallet[2],
+                satoshi=wallet[3],
             )
             if wallet
             else None
@@ -73,7 +76,9 @@ class WalletRepository(IWalletRepository):
         results = self._db.fetch_all(query, (user_id,))
 
         user_wallets = [
-            Wallet(user_id=result[0], address=result[1], satoshi=result[2])
+            Wallet(
+                id=result[0], user_id=result[1], address=result[2], satoshi=result[3]
+            )
             for result in results
         ]
         return user_wallets

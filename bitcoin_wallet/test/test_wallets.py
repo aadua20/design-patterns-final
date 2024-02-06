@@ -128,6 +128,23 @@ def test_get_wallet_by_address_with_valid_api_key(client: TestClient) -> None:
     assert response.json()["wallet"]["address"] == wallet_address
 
 
+def test_should_not_get_others_wallets(client: TestClient) -> None:
+    response = client.post("/users", json={"username": faker.name()})
+    api_key_1 = response.json()["user"]["api_key"]
+
+    response = client.post("/users", json={"username": faker.name()})
+    api_key_2 = response.json()["user"]["api_key"]
+
+    create_wallet_response = client.post(
+        "/wallets", json={}, headers={"X-API-KEY": api_key_1}
+    )
+    wallet_address = create_wallet_response.json()["wallet"]["address"]
+    response = client.get(
+        f"/wallets/{wallet_address}", headers={"X-API-KEY": api_key_2}
+    )
+    assert response.status_code == 403
+
+
 def test_get_wallet_by_address_with_invalid_address(client: TestClient) -> None:
     response = client.post("/users", json={"username": faker.name()})
     api_key = response.json()["user"]["api_key"]

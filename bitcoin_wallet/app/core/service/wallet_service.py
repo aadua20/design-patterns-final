@@ -34,3 +34,9 @@ class WalletService:
 
     def update_wallet_balance(self, wallet_id: int | None, amount: int) -> None:
         return self._wallet_repository.update_wallet_balance(wallet_id, amount)
+
+    def check_user_has_wallet(self, user_id: int, address: str) -> bool:
+        return any(
+            address == wallet.get_address()
+            for wallet in self._wallet_repository.get_user_wallets(user_id)
+        )

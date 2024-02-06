@@ -37,4 +37,6 @@ def test_get_statistics_with_valid_admin_user(client: TestClient) -> None:
         "/statistics", headers={"X-API-KEY": str(os.getenv("ADMIN_API_KEY"))}
     )
     assert response.status_code == 200
-    assert response.json() == {"statistics": {"num_transactions": ANY, "profit": ANY}}
+    assert response.json() == {
+        "statistics": {"num_transactions": ANY, "profit_in_satoshi": ANY}
+    }
